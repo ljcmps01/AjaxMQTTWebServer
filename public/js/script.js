@@ -26,7 +26,7 @@ $(document).ready(() =>
               document.getElementById("nueva").innerHTML=nuevaInfo;
 
               let bajoInfo='';
-      
+              //simplificar en una funcion
               for(let i=0;i<data.bajo.length;i++)
               {
                 for(key in data.bajo[i])

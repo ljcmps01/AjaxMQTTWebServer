@@ -7,9 +7,17 @@ const bodyParser= require('body-parser');
 const mqtt = require('mqtt');
 const client  = mqtt.connect('mqtt://127.0.0.1:1883');
 
-let Nueva=[];
 
-let Bajo=[];
+//Listas que contendran los objetos de cada sensor de cada sala
+let nueva=[];
+let bajo=[];
+let bouchard=[];
+let cuadri=[];
+let entrepiso=[];
+let fuente=[];
+let principal=[];
+let ruleta=[];
+let vip=[];
 
 console.log("inicializando...\n");
 //Funcion de conexion al servidor MQTT
@@ -46,8 +54,8 @@ client.on('message', function (topic, message)
 		case "bajo":
       if(!isNaN(jsonTempHum.temp))
       {
-			  Bajo[json.id]=jsonTempHum;
-        console.log("Se guardo "+Bajo[json.id].temp+"°C "+Bajo[json.id].hum+"%");
+			  bajo[json.id]=jsonTempHum;
+        console.log("Se guardo "+bajo[json.id].temp+"°C "+bajo[json.id].hum+"%");
       }
 			
 			break;
@@ -55,12 +63,76 @@ client.on('message', function (topic, message)
 		case "nueva":
       if(!isNaN(jsonTempHum.temp))
       {
-			  Nueva[json.id]=jsonTempHum;
-        console.log("Se guardo "+Nueva[json.id].temp+"°C "+Nueva[json.id].hum+"%");
+			  nueva[json.id]=jsonTempHum;
+        console.log("Se guardo "+nueva[json.id].temp+"°C "+nueva[json.id].hum+"%");
       }
 			
 			break;
 
+    case "bouchard":
+      if(!isNaN(jsonTempHum.temp))
+      {
+        bouchard[json.id]=jsonTempHum;
+        console.log("Se guardo "+bouchard[json.id].temp+"°C "+bouchard[json.id].hum+"%");
+      }
+      
+      break;
+
+    case "cuadri":
+      if(!isNaN(jsonTempHum.temp))
+      {
+        cuadri[json.id]=jsonTempHum;
+        console.log("Se guardo "+cuadri[json.id].temp+"°C "+cuadri[json.id].hum+"%");
+      }
+      
+      break;
+
+    case "entrepiso":
+      if(!isNaN(jsonTempHum.temp))
+      {
+        entrepiso[json.id]=jsonTempHum;
+        console.log("Se guardo "+entrepiso[json.id].temp+"°C "+entrepiso[json.id].hum+"%");
+      }
+      
+      break;
+
+    case "fuente":
+      if(!isNaN(jsonTempHum.temp))
+      {
+        fuente[json.id]=jsonTempHum;
+        console.log("Se guardo "+fuente[json.id].temp+"°C "+fuente[json.id].hum+"%");
+      }
+      
+      break;
+
+    case "principal":
+      if(!isNaN(jsonTempHum.temp))
+      {
+        principal[json.id]=jsonTempHum;
+        console.log("Se guardo "+principal[json.id].temp+"°C "+principal[json.id].hum+"%");
+      }
+      
+        break;
+                
+
+      case "ruleta":
+        if(!isNaN(jsonTempHum.temp))
+        {
+          ruleta[json.id]=jsonTempHum;
+          console.log("Se guardo "+ruleta[json.id].temp+"°C "+ruleta[json.id].hum+"%");
+        }
+        
+        break;
+
+      case "vip":
+        if(!isNaN(jsonTempHum.temp))
+        {
+          vip[json.id]=jsonTempHum;
+          console.log("Se guardo "+vip[json.id].temp+"°C "+vip[json.id].hum+"%");
+        }
+        
+        break;
+      
 		default:
 			console.log("no se pudo guardar el json");
 			break;
@@ -68,8 +140,16 @@ client.on('message', function (topic, message)
 });
 
 let jsonSalas={
-  'nueva':Nueva,
-  'bajo':Bajo
+  'nueva':nueva,
+  'bajo':bajo,
+  'bouchard':bouchard,
+  'cuadri':cuadri,
+  'entrepiso':entrepiso,
+  'fuente':fuente,
+  'principal':principal,
+  'ruleta':ruleta,
+  'vip':vip
+
 };
 
 app.use(bodyParser.json());
