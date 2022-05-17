@@ -4,32 +4,68 @@ const path=require("path");
 
 const bodyParser= require('body-parser');
 
+const mqtt = require('mqtt');
+const client  = mqtt.connect('mqtt://127.0.0.1:1883');
 
-let Nueva=[
-  {
-    'id':0,
-    'temp':25.4,
-    'hum':50.7
-  },
-  {
-    'id':1,
-    'temp':26.0,
-    'hum':55.0
-  }
-];
+let Nueva=[];
 
-let Bajo=[
+let Bajo=[];
+
+console.log("inicializando...\n");
+//Funcion de conexion al servidor MQTT
+client.on('connect', function () {
+  client.subscribe('test', function (err) {
+    if (!err) {
+      console.log("Conexion MQTT exitosa");
+    }
+  });
+});
+
+client.on('message', function (topic, message) 
+{
+	// message es el mensaje recibido por MQTT
+
+	//imprimo el mensaje recibido
+	console.log("se recibio "+message.toString()+"\n");
+	json=JSON.parse(message.toString());
+	//imprimo la informacion de forma ordenada
+	console.log("sala: "+json.sala);
+	console.log("id: "+json.id);
+	console.log("temperatura: "+json.temp+"°C");
+	console.log("humedad: "+json.hum+"%\n");
+
+	let jsonTempHum=
   {
-    'id':0,
-    'temp':30.0,
-    'hum':55.0
-  },
+		"id":json.id,
+		"temp":json.temp,
+		"hum":json.hum
+	};
+
+	switch (json.sala) 
   {
-    'id':1,
-    'temp':28.3,
-    'hum':56
-  }
-];
+		case "bajo":
+      if(!isNaN(jsonTempHum.temp))
+      {
+			  Bajo[json.id]=jsonTempHum;
+        console.log("Se guardo "+Bajo[json.id].temp+"°C "+Bajo[json.id].hum+"%");
+      }
+			
+			break;
+
+		case "nueva":
+      if(!isNaN(jsonTempHum.temp))
+      {
+			  Nueva[json.id]=jsonTempHum;
+        console.log("Se guardo "+Nueva[json.id].temp+"°C "+Nueva[json.id].hum+"%");
+      }
+			
+			break;
+
+		default:
+			console.log("no se pudo guardar el json");
+			break;
+	}
+});
 
 let jsonSalas={
   'nueva':Nueva,

@@ -41,5 +41,5 @@ $(document).ready(() =>
 
         });
     }
-   setInterval(GetRandom,3000);
+   setInterval(GetRandom,1000);
 });
