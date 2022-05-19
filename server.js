@@ -52,84 +52,57 @@ client.on('message', function (topic, message)
 	switch (json.sala) 
   {
 		case "bajo":
-      if(!isNaN(jsonTempHum.temp))
-      {
 			  bajo[json.id]=jsonTempHum;
         console.log("Se guardo "+bajo[json.id].temp+"°C "+bajo[json.id].hum+"%");
-      }
 			
 			break;
 
 		case "nueva":
-      if(!isNaN(jsonTempHum.temp))
-      {
 			  nueva[json.id]=jsonTempHum;
         console.log("Se guardo "+nueva[json.id].temp+"°C "+nueva[json.id].hum+"%");
-      }
 			
 			break;
 
     case "bouchard":
-      if(!isNaN(jsonTempHum.temp))
-      {
         bouchard[json.id]=jsonTempHum;
         console.log("Se guardo "+bouchard[json.id].temp+"°C "+bouchard[json.id].hum+"%");
-      }
       
       break;
 
     case "cuadri":
-      if(!isNaN(jsonTempHum.temp))
-      {
         cuadri[json.id]=jsonTempHum;
         console.log("Se guardo "+cuadri[json.id].temp+"°C "+cuadri[json.id].hum+"%");
-      }
       
       break;
 
     case "entrepiso":
-      if(!isNaN(jsonTempHum.temp))
-      {
         entrepiso[json.id]=jsonTempHum;
         console.log("Se guardo "+entrepiso[json.id].temp+"°C "+entrepiso[json.id].hum+"%");
-      }
       
       break;
 
     case "fuente":
-      if(!isNaN(jsonTempHum.temp))
-      {
         fuente[json.id]=jsonTempHum;
         console.log("Se guardo "+fuente[json.id].temp+"°C "+fuente[json.id].hum+"%");
-      }
       
       break;
 
     case "principal":
-      if(!isNaN(jsonTempHum.temp))
-      {
         principal[json.id]=jsonTempHum;
         console.log("Se guardo "+principal[json.id].temp+"°C "+principal[json.id].hum+"%");
-      }
       
         break;
                 
 
       case "ruleta":
-        if(!isNaN(jsonTempHum.temp))
-        {
           ruleta[json.id]=jsonTempHum;
           console.log("Se guardo "+ruleta[json.id].temp+"°C "+ruleta[json.id].hum+"%");
-        }
         
         break;
 
       case "vip":
-        if(!isNaN(jsonTempHum.temp))
-        {
           vip[json.id]=jsonTempHum;
           console.log("Se guardo "+vip[json.id].temp+"°C "+vip[json.id].hum+"%");
-        }
         
         break;
       

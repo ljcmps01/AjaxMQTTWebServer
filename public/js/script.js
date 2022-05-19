@@ -12,34 +12,37 @@ $(document).ready(() =>
             data: JSON.stringify({message: 'Hello from client!'}),
             success: (data) => 
             {
-              let nuevaInfo='';
-      
-              for(let i=0;i<data.nueva.length;i++)
-              {
-                for(key in data.nueva[i])
-                {
-                  nuevaInfo=nuevaInfo.concat(`${key}:${data.nueva[i][key]}  |`);
-                }
-                nuevaInfo=nuevaInfo.concat(`<br>`);
-              }
+              let nuevaInfo=cargarDatos(data.nueva);
               console.log(nuevaInfo);
               document.getElementById("nueva").innerHTML=nuevaInfo;
 
-              let bajoInfo='';
-              //simplificar en una funcion
-              for(let i=0;i<data.bajo.length;i++)
-              {
-                for(key in data.bajo[i])
-                {
-                  bajoInfo=bajoInfo.concat(`${key}:${data.bajo[i][key]}  |`);
-                }
-                bajoInfo=bajoInfo.concat(`<br>`);
-              }
+              let bajoInfo=cargarDatos(data.bajo);
               console.log(bajoInfo);
               document.getElementById("bajo").innerHTML=bajoInfo;
+
+              let vipInfo=cargarDatos(data.vip);
+              console.log(vipInfo);
+              document.getElementById("vip").innerHTML=vipInfo;
+
             }
 
         });
     }
    setInterval(GetRandom,1000);
 });
+
+
+//data.sala 
+function cargarDatos(sala) 
+{
+  let datosSala='';
+  for(let i=0;i<sala.length;i++)
+  {
+    for(key in sala[i])
+    {
+      datosSala=datosSala.concat(`${key}:${sala[i][key]}  |`);
+    }
+    datosSala=datosSala.concat(`<br>`);
+  }
+  return datosSala;
+}
