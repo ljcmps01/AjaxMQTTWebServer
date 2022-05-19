@@ -24,6 +24,31 @@ $(document).ready(() =>
               console.log(vipInfo);
               document.getElementById("vip").innerHTML=vipInfo;
 
+              let principalInfo=cargarDatos(data.principal);
+              console.log(principalInfo);
+              document.getElementById("principal").innerHTML=principalInfo;
+
+              let ruletaInfo=cargarDatos(data.ruleta);
+              console.log(ruletaInfo);
+              document.getElementById("ruleta").innerHTML=ruletaInfo;
+
+              let bouchardInfo=cargarDatos(data.bouchard);
+              console.log(bouchardInfo);
+              document.getElementById("bouchard").innerHTML=bouchardInfo;
+
+              let fuenteInfo=cargarDatos(data.fuente);
+              console.log(fuenteInfo);
+              document.getElementById("fuente").innerHTML=fuenteInfo;
+
+              let entrepisoInfo=cargarDatos(data.entrepiso);
+              console.log(entrepisoInfo);
+              document.getElementById("entrepiso").innerHTML=entrepisoInfo;
+
+              let cuadriInfo=cargarDatos(data.cuadri);
+              console.log(cuadriInfo);
+              document.getElementById("cuadri").innerHTML=cuadriInfo;
+
+              
             }
 
         });
