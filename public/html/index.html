@@ -4,57 +4,162 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <title>Ajax example</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="../style/style.css"> -->
   </head>
   <body>
-    <div>
-      <div class="box">
-        Nueva Bingo
-        <div id="nueva">
-          
-        </div>
-      </div>
-      <div class="box">
-        Bajo Bingo
-        <div id="bajo">
-          
-        </div>
-      </div>
-      <div class="box">
-        VIP
-        <div id="vip">
-          
-        </div>
-      </div>
-      <div class="box">
-        Principal
-        <div id="principal">
-          
-        </div>
-      </div>
-      <div class="box">
-        Ruleta
-        <div id="ruleta">
-          
-        </div>
-      </div>
-      <div class="box">
-        Bouchard
-        <div id="bouchard"></div>
-      </div>
-      <div class="box">
-        Fuente
-        <div id="fuente"></div>
-      </div>
-      <div class="box">
-        Entrepiso
-        <div id="entrepiso"></div>
-      </div>
-      <div class="box">
-        Cuadrilatero
-        <div id="cuadri"></div>
-      </div>      
+    <div class="container-fluid overflow-hidden bg-success">
+      
+      <!-- INICIO SECTOR IZQUIERDA -->
+      <!-- NUEVA - BAJO - VIP -->
+      <div class="row g-5">
+        <div class="col">
+            <div class="card">
+              <h4 class="card-header bg-danger text-light">
+                Nueva Bingo
+              </h4>
+              
+              <div class="card-body">
+                <ul id="nueva" class="list-group list-group-flush">
 
+                </ul>
+                  
+              </div>
+            </div>
+        </div>
+          
+
+        <div class="col">
+          <div class="card">
+            <h4 class="card-header bg-danger text-light">
+              Bajo Bingo
+            </h4> 
+            <div class="card-body">
+              <ul id="bajo" class="list-group list-group-flush">
+
+              </ul>
+            </div>
+          </div> 
+          
+        </div>
+
+        <div class="col">
+          <div class="card">
+            <h4 class="card-header bg-danger text-light">
+              VIP
+            </h4>
+            <div id="vip" class="card-body">
+              <ul id="vip" class="list-group list-group-flush">
+                
+              </ul>
+            </div>
+          </div>          
+        </div>
+      </div>
+      <!-- FIN SECTOR IZQUIERDA -->
+
+      <!-- INICIO SECTOR PRINCIPAL -->
+      <!-- PRINCIPAL - RULETA -->
+      <div class="row gx-5 gy-5 justify-content-center">
+        <div class="col">
+          <div class="card">
+            <h4 class="card-header bg-danger text-light">
+              Principal
+            </h4>
+            
+            <div class="card-body">
+              <ul id="principal"  class="list-group list-group-flush">
+
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <h4 class="card-header bg-danger text-light">
+              Ruleta
+            </h4>
+            
+            <div class="card-body">
+              <ul id="ruleta" class="list-group list-group-flush">
+
+              </ul>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- FIN SECTOR PRINCIPAL -->
+
+      <!-- INICIO SECTOR DERECHA -->
+      <!-- BOUCHARD - FUENTE - ENTREPISO - CUADRI -->
+      <div class="row gx-2 justify-content-center">
+        <div class="col">
+          <div class="card">
+            <h4 class="card-header bg-danger text-light">
+              Bouchard
+            </h4>
+            
+            <div class="card-body">
+              <ul id="bouchard" class="list-group list-group-flush">
+
+              </ul>
+            </div>
+          </div>
+        </div>
+          
+        <div class="col">
+          <div class="card">
+            <h4 class="card-header bg-danger text-light">
+              Fuente
+            </h4>
+            
+            <div class="card-body">
+              <ul id="fuente" class="list-group list-group-flush">
+
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col">
+          <div class="card">
+            <h4 class="card-header bg-danger text-light">
+              Entrepiso
+            </h4>
+            
+            <div class="card-body">
+              <ul id="entrepiso" class="list-group list-group-flush">
+
+              </ul>
+  
+            </div>
+          </div>
+        </div>
+          
+        <div class="col">
+          <div class="card">
+
+            <h4 class="card-header bg-danger text-light">
+              Cuadrilatero
+            </h4>
+            
+            <div class="card-body">
+              <ul id="cuadri" class="list-group list-group-flush">
+
+              </ul>
+  
+            </div>  
+          </div>
+        </div> 
+      </div>
+      <!-- FIN SECTOR DERECHA -->
     </div>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity=
         "sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" 

@@ -38,11 +38,12 @@ function cargarDatos(sala)
   let datosSala='';
   for(let i=0;i<sala.length;i++)
   {
+    datosSala=datosSala.concat('<li class="list-group-item">');
     for(key in sala[i])
     {
       datosSala=datosSala.concat(`${key}:${sala[i][key]}  |`);
     }
-    datosSala=datosSala.concat(`<br>`);
+    datosSala=datosSala.concat(`</li>`);
   }
   return datosSala;
 }
