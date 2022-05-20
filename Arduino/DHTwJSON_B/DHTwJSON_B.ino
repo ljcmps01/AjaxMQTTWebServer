@@ -26,18 +26,18 @@
 //"bajo","bouchard","cuadri","entrepiso","fuente",
 //"principal","ruleta","vip"
 const char* salas[6]={
-  "bajo",
-  "bajo",
-  "bajo",
-  "nueva",
-  "nueva",
-  "vip"
+  "cuadri",
+  "",
+  "",
+  "",
+  "",
+  ""
 };
 
 const int id[6]={0,1,2,0,1,0};
 
-byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
-IPAddress ip(192, 168, 20, 201);
+byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xEA };
+IPAddress ip(192, 168, 20, 203);
 IPAddress server(192, 168, 20, 131);
 
 EthernetClient ethClient;
