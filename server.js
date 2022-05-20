@@ -21,14 +21,20 @@ let vip=[];
 
 console.log("inicializando...\n");
 //Funcion de conexion al servidor MQTT
+//Al establecer una conexion exitosa al broker MQTT
+//Se suscribe al topic de stream de data de los sensores DHT22
 client.on('connect', function () {
-  client.subscribe('test', function (err) {
+  client.subscribe({'test':{qos:1}}, function (err) {
     if (!err) {
       console.log("Conexion MQTT exitosa");
     }
   });
 });
 
+//Al recibir un mensaje a traves de un topic suscrito
+//topic: variable donde se guarda el nombre del 
+//      topic de donde proviene el mensaje
+//message: variable donde se guarda la informacion recibida
 client.on('message', function (topic, message) 
 {
 	// message es el mensaje recibido por MQTT

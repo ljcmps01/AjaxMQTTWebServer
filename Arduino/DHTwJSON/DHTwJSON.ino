@@ -14,7 +14,7 @@
 
 #define DHTPIN1 2
 #define DHTPIN2 3
-#define DHTPIN3 5
+#define DHTPIN3 4
 #define DHTPIN4 6
 #define DHTPIN5 7
 #define DHTPIN6 8
@@ -61,8 +61,14 @@ void reconnect() {
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (client.connect("arduinoClient")) {
+    char clientId[16]="arduinoClient";
+    int rNum=random(0,999);
+    char cRandom[10];
+    itoa(rNum,cRandom,6);
+    strcat(clientId,cRandom);
+    if (client.connect(clientId)) {
       Serial.println("connected");
+      Serial.println(clientId);
       // Once connected, publish an announcement...
       //client.publish("outTopic","hello world");
     } else {
@@ -79,6 +85,8 @@ void setup() {
   Serial.begin(9600);
   Serial.println(F("DHTxx test!"));
 
+  
+
   client.setServer(server, 1883);
 
   Ethernet.begin(mac, ip);
@@ -90,6 +98,8 @@ void setup() {
   dht4.begin();
   dht5.begin();
   dht6.begin();
+
+  randomSeed(analogRead(A0));
 }
 
 void loop() {
@@ -133,7 +143,7 @@ void loop() {
     
     client.publish(outTopic,bufferMQTT);
   }
-  //Enviar lectura por MQTT 
+  client.loop();
   delay(INTERVALO);
   //Comienzo la lectura del DHT
   Serial.println("DHT2");
@@ -164,6 +174,7 @@ void loop() {
     client.publish(outTopic,bufferMQTT);
   }
   //Enviar lectura por MQTT 
+  client.loop();
   delay(INTERVALO);
   //Comienzo la lectura del DHT
   Serial.println("DHT3");
@@ -194,6 +205,7 @@ void loop() {
     client.publish(outTopic,bufferMQTT);
   }
   //Enviar lectura por MQTT 
+  client.loop();
   delay(INTERVALO);
   //Comienzo la lectura del DHT
   Serial.println("DHT4");
@@ -224,6 +236,7 @@ void loop() {
     client.publish(outTopic,bufferMQTT);
   }
   //Enviar lectura por MQTT 
+  client.loop();
   delay(INTERVALO);
   //Comienzo la lectura del DHT
   Serial.println("DHT5");
@@ -254,6 +267,11 @@ void loop() {
     client.publish(outTopic,bufferMQTT);
   }
   //Enviar lectura por MQTT 
+  
+  if (!client.connected()) {
+    reconnect();
+  }
+  client.loop();
   delay(INTERVALO);
   //Comienzo la lectura del DHT
   Serial.println("DHT6");
@@ -284,5 +302,6 @@ void loop() {
     client.publish(outTopic,bufferMQTT);
   }
   //Enviar lectura por MQTT 
+  client.loop();
   delay(INTERVALO);
 }
