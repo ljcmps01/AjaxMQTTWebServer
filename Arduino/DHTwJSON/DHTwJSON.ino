@@ -12,6 +12,7 @@
 
 #define INTERVALO 1000
 
+#define nDHT 6
 #define DHTPIN1 2
 #define DHTPIN2 3
 #define DHTPIN3 5
@@ -37,22 +38,24 @@ const char* salas[6]={
 const int id[6]={0,1,2,0,1,0};
 
 byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
-IPAddress ip(192, 168, 20, 201);
+
 IPAddress server(192, 168, 20, 131);
 
 EthernetClient ethClient;
 PubSubClient client(ethClient);
 
-char* outTopic="test";
+char* outTopic="/bingo/temperatura";
 
 // Inicializo los sensores DHT.
-DHT dht1(DHTPIN1, DHTTYPE);
-DHT dht2(DHTPIN2, DHTTYPE);
-DHT dht3(DHTPIN3, DHTTYPE);
-DHT dht4(DHTPIN4, DHTTYPE);
-DHT dht5(DHTPIN5, DHTTYPE);
-DHT dht6(DHTPIN6, DHTTYPE);
-
+DHT dht[nDHT]=
+{
+  {DHTPIN1,DHTTYPE},
+  {DHTPIN2,DHTTYPE},
+  {DHTPIN3,DHTTYPE},
+  {DHTPIN4,DHTTYPE},
+  {DHTPIN5,DHTTYPE},
+  {DHTPIN6,DHTTYPE}
+};
 
 
 //Funcion de conexion al servidor MQTT
@@ -85,222 +88,62 @@ void setup() {
   Serial.begin(9600);
   Serial.println(F("DHTxx test!"));
 
-  
-
   client.setServer(server, 1883);
 
-  Ethernet.begin(mac, ip);
+  Ethernet.begin(mac);
+  Serial.println(Ethernet.localIP());
 
-
-  dht1.begin();
-  dht2.begin();
-  dht3.begin();
-  dht4.begin();
-  dht5.begin();
-  dht6.begin();
-
+  for (int i=0;i<nDHT;i++)
+  {
+    dht[i].begin();
+  }
+  
   randomSeed(analogRead(A0));
 }
 
 void loop() {
-  DynamicJsonDocument lectura(256);
+  if (!client.connected()) {
+    reconnect();
+  }  
+
+    client.loop();
+  char data[200];
+  
+  for(int i=0;i<nDHT;i++)
+  {
+    sendDHT2JsonString(dht[i],i,data);
+    Serial.println(data);
+    client.publish(outTopic,data);
+    delay(INTERVALO);
+    client.loop();
+  }
+}
+
+
+
+void sendDHT2JsonString(DHT sensor,int indice, char *salida)
+{
+  StaticJsonDocument<100> lectura;
+  char data[100];
+  
   float temp;
   float hum;
 
-  char bufferMQTT[256];
+  lectura["sala"]=salas[indice];
+  lectura["id"]=id[indice];
 
-  if (!client.connected()) {
-    reconnect();
-  }
-  client.loop();
-
-  delay(INTERVALO);
-  //Comienzo la lectura del DHT
-  Serial.println("DHT1");
-  lectura["sala"]=salas[0];
-  lectura["id"]=id[0];
-  temp=dht1.readTemperature();
-  hum=dht1.readHumidity();
-  if(isnan(temp)||isnan(hum)){
-    Serial.println("error en lectura");
-    
+  temp=sensor.readTemperature();
+  hum=sensor.readHumidity();
+  if(isnan(temp)||isnan(hum))
+  {
     lectura["temp"]="nan";
     lectura["hum"]="nan";
-    serializeJson(lectura,bufferMQTT);
-    client.publish(outTopic,bufferMQTT);
   }
-  else{
+  else
+  {
     lectura["temp"]=temp;
-    lectura["hum"]=hum;
-    serializeJson(lectura["temp"],Serial);
-    Serial.println("°C");
-    serializeJson(lectura["hum"],Serial);
-    Serial.println("%");
-    serializeJson(lectura,bufferMQTT);
-    Serial.println("");
-    serializeJson(lectura,Serial);
-    Serial.println("");
-    
-    client.publish(outTopic,bufferMQTT);
+    lectura["hum"]=hum;    
   }
-  delay(INTERVALO);
-  //Comienzo la lectura del DHT
-  Serial.println("DHT2");
-  lectura["sala"]=salas[1];
-  lectura["id"]=id[1];
-  temp=dht2.readTemperature();
-  hum=dht2.readHumidity();
-  if(isnan(temp)||isnan(hum)){
-    Serial.println("error en lectura");
-    
-    lectura["temp"]="nan";
-    lectura["hum"]="nan";
-    serializeJson(lectura,bufferMQTT);
-    client.publish(outTopic,bufferMQTT);
-  }
-  else{
-    lectura["temp"]=temp;
-    lectura["hum"]=hum;
-    serializeJson(lectura["temp"],Serial);
-    Serial.println("°C");
-    serializeJson(lectura["hum"],Serial);
-    Serial.println("%");
-    serializeJson(lectura,bufferMQTT);
-    Serial.println("");
-    serializeJson(lectura,Serial);
-    Serial.println("");
-
-    client.publish(outTopic,bufferMQTT);
-  }
-  //Enviar lectura por MQTT 
-  client.loop();
-  delay(INTERVALO);
-  //Comienzo la lectura del DHT
-  Serial.println("DHT3");
-  lectura["sala"]=salas[2];
-  lectura["id"]=id[2];
-  temp=dht3.readTemperature();
-  hum=dht3.readHumidity();
-  if(isnan(temp)||isnan(hum)){
-    Serial.println("error en lectura");
-    
-    lectura["temp"]="nan";
-    lectura["hum"]="nan";
-    serializeJson(lectura,bufferMQTT);
-    client.publish(outTopic,bufferMQTT);
-  }
-  else{
-    lectura["temp"]=temp;
-    lectura["hum"]=hum;
-    serializeJson(lectura["temp"],Serial);
-    Serial.println("°C");
-    serializeJson(lectura["hum"],Serial);
-    Serial.println("%");
-    serializeJson(lectura,bufferMQTT);
-    Serial.println("");
-    serializeJson(lectura,Serial);
-    Serial.println("");
-
-    client.publish(outTopic,bufferMQTT);
-  }
-  //Enviar lectura por MQTT 
-  client.loop();
-  delay(INTERVALO);
-  //Comienzo la lectura del DHT
-  Serial.println("DHT4");
-  lectura["sala"]=salas[3];
-  lectura["id"]=id[3];
-  temp=dht4.readTemperature();
-  hum=dht4.readHumidity();
-  if(isnan(temp)||isnan(hum)){
-    Serial.println("error en lectura");
-    
-    lectura["temp"]="nan";
-    lectura["hum"]="nan";
-    serializeJson(lectura,bufferMQTT);
-    client.publish(outTopic,bufferMQTT);
-  }
-  else{
-    lectura["temp"]=temp;
-    lectura["hum"]=hum;
-    serializeJson(lectura["temp"],Serial);
-    Serial.println("°C");
-    serializeJson(lectura["hum"],Serial);
-    Serial.println("%");
-    serializeJson(lectura,bufferMQTT);
-    Serial.println("");
-    serializeJson(lectura,Serial);
-    Serial.println("");
-
-    client.publish(outTopic,bufferMQTT);
-  }
-  //Enviar lectura por MQTT 
-  client.loop();
-  delay(INTERVALO);
-  //Comienzo la lectura del DHT
-  Serial.println("DHT5");
-  lectura["sala"]=salas[4];
-  lectura["id"]=id[4];
-  temp=dht5.readTemperature();
-  hum=dht5.readHumidity();
-  if(isnan(temp)||isnan(hum)){
-    Serial.println("error en lectura");
-    
-    lectura["temp"]="nan";
-    lectura["hum"]="nan";
-    serializeJson(lectura,bufferMQTT);
-    client.publish(outTopic,bufferMQTT);
-  }
-  else{
-    lectura["temp"]=temp;
-    lectura["hum"]=hum;
-    serializeJson(lectura["temp"],Serial);
-    Serial.println("°C");
-    serializeJson(lectura["hum"],Serial);
-    Serial.println("%");
-    serializeJson(lectura,bufferMQTT);
-    Serial.println("");
-    serializeJson(lectura,Serial);
-    Serial.println("");
-
-    client.publish(outTopic,bufferMQTT);
-  }
-  //Enviar lectura por MQTT 
-  
-  if (!client.connected()) {
-    reconnect();
-  }
-  client.loop();
-  delay(INTERVALO);
-  //Comienzo la lectura del DHT
-  Serial.println("DHT6");
-  lectura["sala"]=salas[5];
-  lectura["id"]=id[5];
-  temp=dht6.readTemperature();
-  hum=dht6.readHumidity();
-  if(isnan(temp)||isnan(hum)){
-    Serial.println("error en lectura");
-    
-    lectura["temp"]="nan";
-    lectura["hum"]="nan";
-    serializeJson(lectura,bufferMQTT);
-    client.publish(outTopic,bufferMQTT);
-  }
-  else{
-    lectura["temp"]=temp;
-    lectura["hum"]=hum;
-    serializeJson(lectura["temp"],Serial);
-    Serial.println("°C");
-    serializeJson(lectura["hum"],Serial);
-    Serial.println("%");
-    serializeJson(lectura,bufferMQTT);
-    Serial.println("");
-    serializeJson(lectura,Serial);
-    Serial.println("");
-
-    client.publish(outTopic,bufferMQTT);
-  }
-  //Enviar lectura por MQTT 
-  client.loop();
-  delay(INTERVALO);
+  serializeJson(lectura,data);
+  strcpy(salida,data);
 }
