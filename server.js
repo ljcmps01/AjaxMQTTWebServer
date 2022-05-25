@@ -24,7 +24,7 @@ console.log("inicializando...\n");
 //Al establecer una conexion exitosa al broker MQTT
 //Se suscribe al topic de stream de data de los sensores DHT22
 client.on('connect', function () {
-  client.subscribe({'test':{qos:1}}, function (err) {
+  client.subscribe({'/bingo/temperatura':{qos:1}}, function (err) {
     if (!err) {
       console.log("Conexion MQTT exitosa");
     }

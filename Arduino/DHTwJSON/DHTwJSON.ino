@@ -38,13 +38,13 @@ const char* salas[6]={
 const int id[6]={0,1,2,0,1,0};
 
 byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
-//IPAddress ip(192, 168, 20, 201);
+
 IPAddress server(192, 168, 20, 131);
 
 EthernetClient ethClient;
 PubSubClient client(ethClient);
 
-char* outTopic="test";
+char* outTopic="/bingo/temperatura";
 
 // Inicializo los sensores DHT.
 DHT dht[nDHT]=
@@ -88,12 +88,10 @@ void setup() {
   Serial.begin(9600);
   Serial.println(F("DHTxx test!"));
 
-  
-
   client.setServer(server, 1883);
 
   Ethernet.begin(mac);
-
+  Serial.println(Ethernet.localIP());
 
   for (int i=0;i<nDHT;i++)
   {
@@ -104,21 +102,18 @@ void setup() {
 }
 
 void loop() {
-  StaticJsonDocument<100> lectura;
-  float temp;
-  float hum;
-
-  char bufferMQTT[100];
-
   if (!client.connected()) {
     reconnect();
-  }
+  }  
 
-  
+    client.loop();
+  char data[200];
   
   for(int i=0;i<nDHT;i++)
   {
-    client.publish(outTopic,sendDHT2JsonString(dht[i],i));
+    sendDHT2JsonString(dht[i],i,data);
+    Serial.println(data);
+    client.publish(outTopic,data);
     delay(INTERVALO);
     client.loop();
   }
@@ -126,7 +121,7 @@ void loop() {
 
 
 
-char sendDHT2JsonString(DHT sensor,int indice)
+void sendDHT2JsonString(DHT sensor,int indice, char *salida)
 {
   StaticJsonDocument<100> lectura;
   char data[100];
@@ -141,8 +136,8 @@ char sendDHT2JsonString(DHT sensor,int indice)
   hum=sensor.readHumidity();
   if(isnan(temp)||isnan(hum))
   {
-    lectura["temp"]="error";
-    lectura["hum"]="error";
+    lectura["temp"]="nan";
+    lectura["hum"]="nan";
   }
   else
   {
@@ -150,5 +145,5 @@ char sendDHT2JsonString(DHT sensor,int indice)
     lectura["hum"]=hum;    
   }
   serializeJson(lectura,data);
-  return data;
+  strcpy(salida,data);
 }
