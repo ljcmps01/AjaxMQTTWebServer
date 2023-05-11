@@ -5,7 +5,7 @@ const path=require("path");
 const bodyParser= require('body-parser');
 
 const mqtt = require('mqtt');
-const client  = mqtt.connect('mqtt://127.0.0.1:1883');
+const client  = mqtt.connect('mqtt://localhost:1883');
 
 
 //Listas que contendran los objetos de cada sensor de cada sala
@@ -27,6 +27,10 @@ client.on('connect', function () {
   client.subscribe({'/bingo/temperatura':{qos:1}}, function (err) {
     if (!err) {
       console.log("Conexion MQTT exitosa");
+    }
+    else
+    {
+      console.log("Conexion MQTT no pudo conectar");
     }
   });
 });
@@ -94,24 +98,24 @@ client.on('message', function (topic, message)
       break;
 
     case "principal":
-        principal[json.id]=jsonTempHum;
-        console.log("Se guardo "+principal[json.id].temp+"°C "+principal[json.id].hum+"%");
-      
-        break;
-                
+      principal[json.id]=jsonTempHum;
+      console.log("Se guardo "+principal[json.id].temp+"°C "+principal[json.id].hum+"%");
+    
+      break;
+              
 
-      case "ruleta":
-          ruleta[json.id]=jsonTempHum;
-          console.log("Se guardo "+ruleta[json.id].temp+"°C "+ruleta[json.id].hum+"%");
-        
-        break;
-
-      case "vip":
-          vip[json.id]=jsonTempHum;
-          console.log("Se guardo "+vip[json.id].temp+"°C "+vip[json.id].hum+"%");
-        
-        break;
+    case "ruleta":
+        ruleta[json.id]=jsonTempHum;
+        console.log("Se guardo "+ruleta[json.id].temp+"°C "+ruleta[json.id].hum+"%");
       
+      break;
+
+    case "vip":
+        vip[json.id]=jsonTempHum;
+        console.log("Se guardo "+vip[json.id].temp+"°C "+vip[json.id].hum+"%");
+      
+      break;
+    
 		default:
 			console.log("no se pudo guardar el json");
 			break;
