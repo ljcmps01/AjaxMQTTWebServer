@@ -13,12 +13,12 @@
 #define INTERVALO 1000
 
 #define nDHT 6
-#define DHTPIN1 2
-#define DHTPIN2 3
-#define DHTPIN3 5
-#define DHTPIN4 6
-#define DHTPIN5 7
-#define DHTPIN6 8
+#define DHTPIN1 A0
+#define DHTPIN2 A1
+#define DHTPIN3 A2
+#define DHTPIN4 A3
+#define DHTPIN5 A4
+#define DHTPIN6 A5
 
 #define DHTTYPE DHT22   
 
@@ -39,7 +39,8 @@ const int id[6]={0,1,2,0,1,0};
 
 byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
 
-IPAddress server(192, 168, 20, 131);
+char* server = "bingolab.local";
+// IPAddress server(192, 168, 20, 131);
 
 EthernetClient ethClient;
 PubSubClient client(ethClient);
