@@ -1,15 +1,17 @@
 #include <ArduinoJson.h>
 #include "DHT.h"
 
+#define INTERVALO 1000
+
 #define nDHT 6
 #define DHTTYPE DHT22
 
-#define DHTPIN1 2
-#define DHTPIN2 3
-#define DHTPIN3 5
-#define DHTPIN4 6
-#define DHTPIN5 7
-#define DHTPIN6 8
+#define DHTPIN1 A0
+#define DHTPIN2 A1
+#define DHTPIN3 A2
+#define DHTPIN4 A3
+#define DHTPIN5 A4
+#define DHTPIN6 A5
 
 //Constructores hardcodeados
 /*
@@ -65,19 +67,30 @@ void setup() {
   {
     dht[i].begin();
   }
+
+  Serial.begin(9600);
+  Serial.println("Prueba de DHT");
 }
 
 
 void loop() {
 
+  char data[200];
+  
   for(int i=0;i<nDHT;i++)
   {
-    sendDHT2JsonString(dht[i],i);
+    sendDHT2JsonString(dht[i],i,data);
+    Serial.print(i);
+    Serial.print(" - ");
+    Serial.println(data);
+    delay(INTERVALO);
   }
+
+  Serial.println();
   
 }
 
-char sendDHT2JsonString(DHT sensor,int indice)
+char sendDHT2JsonString(DHT sensor,int indice, char *salida)
 {
   StaticJsonDocument<100> lectura;
   char data[100];
@@ -101,5 +114,5 @@ char sendDHT2JsonString(DHT sensor,int indice)
     lectura["hum"]=hum;    
   }
   serializeJson(lectura,data);
-  return data;
+  strcpy(salida,data);
 }  
