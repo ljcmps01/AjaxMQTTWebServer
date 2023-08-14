@@ -10,6 +10,8 @@
 #include "DHT.h"
 #include <ArduinoJson.h>
 
+#include "config_sensores.h"
+
 #define INTERVALO 1000
 
 #define nDHT 6
@@ -27,25 +29,30 @@
 //"bajo","bouchard","cuadri","entrepiso","fuente",
 //"principal","ruleta","vip"
 const char* salas[6]={
-  "bajo",
-  "bajo",
-  "bajo",
-  "nueva",
-  "nueva",
-  "vip"
+  SALA_SENSOR0,
+  SALA_SENSOR1,
+  SALA_SENSOR2,
+  SALA_SENSOR3,
+  SALA_SENSOR4,
+  SALA_SENSOR5
 };
 
-const int id[6]={0,1,2,0,1,0};
+const int id[6]={
+  ID_SENSOR0,
+  ID_SENSOR1,
+  ID_SENSOR2,
+  ID_SENSOR3,
+  ID_SENSOR4,
+  ID_SENSOR5
+};
 
-byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
-
-char* server = "bingolab.local";
-// IPAddress server(192, 168, 20, 131);
+// const char* server = "bingolab.local";
+IPAddress server(192, 168, 20, 136);
 
 EthernetClient ethClient;
 PubSubClient client(ethClient);
 
-char* outTopic="/bingo/temperatura";
+const char* outTopic="/bingo/temperatura";
 
 // Inicializo los sensores DHT.
 DHT dht[nDHT]=
@@ -89,17 +96,18 @@ void setup() {
   Serial.begin(9600);
   Serial.println(F("DHTxx test!"));
 
+  randomSeed(analogRead(A0));
+
   client.setServer(server, 1883);
 
+  byte mac[]= {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, byte(random(0,256)) };
   Ethernet.begin(mac);
   Serial.println(Ethernet.localIP());
 
   for (int i=0;i<nDHT;i++)
   {
     dht[i].begin();
-  }
-  
-  randomSeed(analogRead(A0));
+  }  
 }
 
 void loop() {
