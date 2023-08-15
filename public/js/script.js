@@ -63,11 +63,15 @@ function cargarDatos(sala)
   let datosSala='';
   for(let i=0;i<sala.length;i++)
   {
-    datosSala=datosSala.concat('<li class="list-group-item">');
+    datosSala=datosSala.concat('<li class="list-group-item card-group">');
+    datosSala=datosSala.concat('<div class="card-group">');
     for(key in sala[i])
     {
-      datosSala=datosSala.concat(`${key}:${sala[i][key]}  |`);
+      datosSala=datosSala.concat('<div class="card">');
+      datosSala=datosSala.concat(`${key}:${sala[i][key]}`);
+      datosSala=datosSala.concat('</div>');
     }
+    datosSala=datosSala.concat('</div>');
     datosSala=datosSala.concat(`</li>`);
   }
   return datosSala;
