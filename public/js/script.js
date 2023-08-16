@@ -1,3 +1,6 @@
+umbralMin = 18
+umbralMax = 24
+
 $(document).ready(() => 
 {
     function GetRandom() 
@@ -56,6 +59,8 @@ $(document).ready(() =>
    setInterval(GetRandom,1000);
 });
 
+document.getElementById("umbral-update").addEventListener("click", actualizarUmbral());
+
 
 //data.sala 
 function cargarDatos(sala) 
@@ -63,11 +68,32 @@ function cargarDatos(sala)
   let datosSala='';
   for(let i=0;i<sala.length;i++)
   {
+    alert_type = "alert-secondary";
     datosSala=datosSala.concat('<li class="list-group-item card-group">');
     datosSala=datosSala.concat('<div class="card-group">');
+    
+    // si se leyó la temperatura
+    if (sala[i]!= null && sala[i]['temp'] != 'nan')
+    {
+      // si la temperatura supera el maximo
+      if (sala[i]['temp'] >= umbralMax)
+      {
+        alert_type = "alert-danger";
+      }
+      // si la temperatura esta por debajo del minimo
+      else if (sala[i]['temp'] <= umbralMin)
+      {
+        alert_type = "alert-primary";
+      }
+      // si la temperatura esta dentro del rango establecido
+      else
+      {
+        alert_type = "alert-success";
+      }
+    }
     for(key in sala[i])
     {
-      datosSala=datosSala.concat('<div class="card alert alert-danger">');
+      datosSala=datosSala.concat(`<div class="card alert ${alert_type}">`);
       datosSala=datosSala.concat(`${key}:${sala[i][key]}`);
       datosSala=datosSala.concat('</div>');
     }
@@ -75,4 +101,8 @@ function cargarDatos(sala)
     datosSala=datosSala.concat(`</li>`);
   }
   return datosSala;
+}
+
+function actualizarUmbral(minID,maxID) {
+  
 }
