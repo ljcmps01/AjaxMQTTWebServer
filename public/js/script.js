@@ -12,9 +12,9 @@ $(document).ready(() =>
             data: JSON.stringify({message: 'Hello from client!'}),
             success: (data) => 
             {
-              let nuevaInfo=cargarDatos(data.nueva);
-              console.log(nuevaInfo);
-              document.getElementById("nueva").innerHTML=nuevaInfo;
+              let franciaInfo=cargarDatos(data.francia);
+              console.log(franciaInfo);
+              document.getElementById("francia").innerHTML=franciaInfo;
 
               let bajoInfo=cargarDatos(data.bajo);
               console.log(bajoInfo);
@@ -67,7 +67,7 @@ function cargarDatos(sala)
     datosSala=datosSala.concat('<div class="card-group">');
     for(key in sala[i])
     {
-      datosSala=datosSala.concat('<div class="card">');
+      datosSala=datosSala.concat('<div class="card alert alert-danger">');
       datosSala=datosSala.concat(`${key}:${sala[i][key]}`);
       datosSala=datosSala.concat('</div>');
     }

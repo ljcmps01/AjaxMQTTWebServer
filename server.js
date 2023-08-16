@@ -9,7 +9,7 @@ const client  = mqtt.connect('mqtt://localhost:1883');
 
 
 //Listas que contendran los objetos de cada sensor de cada sala
-let nueva=[];
+let francia=[];
 let bajo=[];
 let bouchard=[];
 let cuadri=[];
@@ -67,9 +67,9 @@ client.on('message', function (topic, message)
 			
 			break;
 
-		case "nueva":
-			  nueva[json.id]=jsonTempHum;
-        console.log("Se guardo "+nueva[json.id].temp+"°C "+nueva[json.id].hum+"%");
+		case "francia":
+			  francia[json.id]=jsonTempHum;
+        console.log("Se guardo "+francia[json.id].temp+"°C "+francia[json.id].hum+"%");
 			
 			break;
 
@@ -123,7 +123,7 @@ client.on('message', function (topic, message)
 });
 
 let jsonSalas={
-  'nueva':nueva,
+  'francia':francia,
   'bajo':bajo,
   'bouchard':bouchard,
   'cuadri':cuadri,
