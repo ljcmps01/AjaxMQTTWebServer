@@ -57,9 +57,14 @@ $(document).ready(() =>
         });
     }
    setInterval(GetRandom,1000);
+   
+   const botonUpdateUmbral = $("#umbral-update");
+   botonUpdateUmbral.click(()=> actualizarUmbral("umbralMin","umbralMax"));
+   
+    document.getElementById("umbralMin").placeholder = `min (${umbralMin}°C)`;
+    document.getElementById("umbralMax").placeholder = `max (${umbralMax}°C)`;
 });
 
-document.getElementById("umbral-update").addEventListener("click", actualizarUmbral());
 
 
 //data.sala 
@@ -104,5 +109,28 @@ function cargarDatos(sala)
 }
 
 function actualizarUmbral(minID,maxID) {
-  
+  inputUmbralMin = parseFloat(document.getElementById(minID).value);
+  inputUmbralMax = parseFloat(document.getElementById(maxID).value);
+
+  if (!isNaN(inputUmbralMin) && inputUmbralMin < umbralMax) {
+    umbralMin = inputUmbralMin;
+    console.log("Nuevo umbral minimo:", umbralMin);
+  } else {
+    console.log("Valor de umbral minimo ingresado es invalido");
+  } 
+
+  if (!isNaN(inputUmbralMax) && inputUmbralMax > umbralMin) {
+    umbralMax = inputUmbralMax;
+    console.log("Nuevo umbral maximo:", umbralMax);
+  } else {
+    console.log("Valor de umbral maximo ingresado es invalido");
+  } 
+
+  // Update placeholders with the current values
+  document.getElementById(minID).placeholder = `min (${umbralMin}°C)`;
+  document.getElementById(maxID).placeholder = `max (${umbralMax}°C)`;
+
+  // Reset the input values
+  document.getElementById(minID).value = '';
+  document.getElementById(maxID).value = '';
 }
