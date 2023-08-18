@@ -14,7 +14,7 @@
 
 #define INTERVALO 1000
 
-#define nDHT 6
+
 #define DHTPIN1 A0
 #define DHTPIN2 A1
 #define DHTPIN3 A2
@@ -55,7 +55,7 @@ PubSubClient client(ethClient);
 const char* outTopic="/bingo/temperatura";
 
 // Inicializo los sensores DHT.
-DHT dht[nDHT]=
+DHT dht[N_DHT]=
 {
   {DHTPIN1,DHTTYPE},
   {DHTPIN2,DHTTYPE},
@@ -94,7 +94,19 @@ void reconnect() {
 
 void setup() {
   Serial.begin(9600);
-  Serial.println(F("DHTxx test!"));
+  Serial.println(F("DHT22:"));
+  
+  Serial.println("#DHT\t|\t   sala   \t|\tID");
+  Serial.println("------------------------------------------------------------");
+  for (int i=0;i<N_DHT;i++)
+  {
+    dht[i].begin();
+    Serial.print(i+1);
+    Serial.print("\t|\tsala: ");
+    Serial.print(salas[i]);
+    Serial.print("\t|\tid:");
+    Serial.println(id[i]);
+  } 
 
   randomSeed(analogRead(A0));
 
@@ -103,11 +115,7 @@ void setup() {
   byte mac[]= {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, byte(random(0,256)) };
   Ethernet.begin(mac);
   Serial.println(Ethernet.localIP());
-
-  for (int i=0;i<nDHT;i++)
-  {
-    dht[i].begin();
-  }  
+  
 }
 
 void loop() {
@@ -118,7 +126,7 @@ void loop() {
     client.loop();
   char data[200];
   
-  for(int i=0;i<nDHT;i++)
+  for(int i=0;i<N_DHT;i++)
   {
     sendDHT2JsonString(dht[i],i,data);
     Serial.println(data);
