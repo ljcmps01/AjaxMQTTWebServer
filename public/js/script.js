@@ -1,68 +1,79 @@
-umbralMin = 18
-umbralMax = 24
+umbralMin = null
+umbralMax = null
 
 $(document).ready(() => 
 {
-    function GetRandom() 
-    {
-        console.log('Runing ajax...');
-        $.ajax(
+  // Obtengo los vales iniciales de los umbrales
+  $.get("/recibir-umbrales",function(data){
+    const {min, max} = data;
+    umbralMin = min;
+    umbralMax = max;
+    
+    document.getElementById("umbralMin").placeholder = `min (${umbralMin}°C)`;
+    document.getElementById("umbralMax").placeholder = `max (${umbralMax}°C)`;
+    
+  })
+
+  function leerSensores() 
+  {
+      // console.log('Runing ajax...');
+      $.ajax(
+        {
+          url: '/enviar-sensores',
+          type: 'POST',
+          contentType: 'application/json',
+          dataType: 'json',
+          // data: JSON.stringify({message: 'Hello from client!'}),
+          success: (data) => 
           {
-            url: '/testingAjax',
-            type: 'POST',
-            contentType: 'application/json',
-            dataType: 'json',
-            data: JSON.stringify({message: 'Hello from client!'}),
-            success: (data) => 
-            {
-              let franciaInfo=cargarDatos(data.francia);
-              console.log(franciaInfo);
-              document.getElementById("francia").innerHTML=franciaInfo;
+            let franciaInfo=cargarDatos(data.francia);
+            console.log(franciaInfo);
+            document.getElementById("francia").innerHTML=franciaInfo;
 
-              let bajoInfo=cargarDatos(data.bajo);
-              console.log(bajoInfo);
-              document.getElementById("bajo").innerHTML=bajoInfo;
+            let bajoInfo=cargarDatos(data.bajo);
+            console.log(bajoInfo);
+            document.getElementById("bajo").innerHTML=bajoInfo;
 
-              let vipInfo=cargarDatos(data.vip);
-              console.log(vipInfo);
-              document.getElementById("vip").innerHTML=vipInfo;
+            let vipInfo=cargarDatos(data.vip);
+            console.log(vipInfo);
+            document.getElementById("vip").innerHTML=vipInfo;
 
-              let principalInfo=cargarDatos(data.principal);
-              console.log(principalInfo);
-              document.getElementById("principal").innerHTML=principalInfo;
+            let principalInfo=cargarDatos(data.principal);
+            console.log(principalInfo);
+            document.getElementById("principal").innerHTML=principalInfo;
 
-              let ruletaInfo=cargarDatos(data.ruleta);
-              console.log(ruletaInfo);
-              document.getElementById("ruleta").innerHTML=ruletaInfo;
+            let ruletaInfo=cargarDatos(data.ruleta);
+            console.log(ruletaInfo);
+            document.getElementById("ruleta").innerHTML=ruletaInfo;
 
-              let bouchardInfo=cargarDatos(data.bouchard);
-              console.log(bouchardInfo);
-              document.getElementById("bouchard").innerHTML=bouchardInfo;
+            let bouchardInfo=cargarDatos(data.bouchard);
+            console.log(bouchardInfo);
+            document.getElementById("bouchard").innerHTML=bouchardInfo;
 
-              let fuenteInfo=cargarDatos(data.fuente);
-              console.log(fuenteInfo);
-              document.getElementById("fuente").innerHTML=fuenteInfo;
+            let fuenteInfo=cargarDatos(data.fuente);
+            console.log(fuenteInfo);
+            document.getElementById("fuente").innerHTML=fuenteInfo;
 
-              let entrepisoInfo=cargarDatos(data.entrepiso);
-              console.log(entrepisoInfo);
-              document.getElementById("entrepiso").innerHTML=entrepisoInfo;
+            let entrepisoInfo=cargarDatos(data.entrepiso);
+            console.log(entrepisoInfo);
+            document.getElementById("entrepiso").innerHTML=entrepisoInfo;
 
-              let cuadriInfo=cargarDatos(data.cuadri);
-              console.log(cuadriInfo);
-              document.getElementById("cuadri").innerHTML=cuadriInfo;
+            let cuadriInfo=cargarDatos(data.cuadri);
+            console.log(cuadriInfo);
+            document.getElementById("cuadri").innerHTML=cuadriInfo;
 
-              
-            }
+            
+          }
 
-        });
+      });
     }
-   setInterval(GetRandom,1000);
+   setInterval(leerSensores,1000);
    
    const botonUpdateUmbral = $("#umbral-update");
    botonUpdateUmbral.click(()=> actualizarUmbral("umbralMin","umbralMax"));
    
-    document.getElementById("umbralMin").placeholder = `min (${umbralMin}°C)`;
-    document.getElementById("umbralMax").placeholder = `max (${umbralMax}°C)`;
+  // document.getElementById("umbralMin").placeholder = `min (${umbralMin}°C)`;
+  // document.getElementById("umbralMax").placeholder = `max (${umbralMax}°C)`;
 });
 
 
@@ -125,6 +136,16 @@ function actualizarUmbral(minID,maxID) {
   } else {
     console.log("Valor de umbral maximo ingresado es invalido");
   } 
+
+  $.ajax({
+    type: "POST",
+    url: "actualizar-umbral",
+    data: JSON.stringify({ nuevoMinimo: umbralMin, nuevoMaximo: umbralMax}),
+    contentType: "application/json",
+    success: function(){
+      console.log("Se actualizaron los umbrales con exito")
+    }
+  })
 
   // Update placeholders with the current values
   document.getElementById(minID).placeholder = `min (${umbralMin}°C)`;

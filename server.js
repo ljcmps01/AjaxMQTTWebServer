@@ -7,6 +7,7 @@ const bodyParser= require('body-parser');
 const mqtt = require('mqtt');
 const client  = mqtt.connect('mqtt://localhost:1883');
 
+app.use(bodyParser.json())
 
 //Listas que contendran los objetos de cada sensor de cada sala
 let francia=[];
@@ -18,6 +19,10 @@ let fuente=[];
 let principal=[];
 let ruleta=[];
 let vip=[];
+
+// Umbrales de temperatura
+let umbralMin = 10
+let umbralMax = 30
 
 console.log("inicializando...\n");
 //Funcion de conexion al servidor MQTT
@@ -143,9 +148,21 @@ app.get('/',(req,res)=>{
 });
 app.listen(3000, () => console.log('Example app is listening on port 3000.'));
 
-app.post('/testingAjax', (req, res) =>{ 
-	console.log(req.body);
-  //res.send({'response':Math.floor(Math.random()*100)});
+app.get('/recibir-umbrales',(req,res)=>{
+  res.json({min: umbralMin, max: umbralMax});
+});
+
+app.post('/enviar-sensores', (req, res) =>{ 
+	// console.log(req.body);
   res.send(jsonSalas);
+});
+
+app.post('/actualizar-umbral',(req, res) =>{
+  const {nuevoMinimo,nuevoMaximo} = req.body;
+  umbralMin = nuevoMinimo;
+  umbralMax = nuevoMaximo;
+
+  console.log ('Nuevos umbrales: ', umbralMin, '°C |',umbralMax,'°C');
+  res.sendStatus(200);
 });
 
