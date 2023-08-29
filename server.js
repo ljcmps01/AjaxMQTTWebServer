@@ -1,6 +1,7 @@
 const express=require("express");
 const app= express();
 const path=require("path");
+const fs = require("fs");
 
 const bodyParser= require('body-parser');
 
@@ -8,6 +9,10 @@ const mqtt = require('mqtt');
 const client  = mqtt.connect('mqtt://localhost:1883');
 
 app.use(bodyParser.json())
+
+const configPath = path.join(__dirname, 'config.json')
+
+let configJSON = null
 
 //Listas que contendran los objetos de cada sensor de cada sala
 let francia=[];
@@ -21,8 +26,22 @@ let ruleta=[];
 let vip=[];
 
 // Umbrales de temperatura
-let umbralMin = 10
-let umbralMax = 30
+let umbralMin = 10;
+let umbralMax = 30;
+
+// Lectura de json inicial
+
+fs.readFile(configPath, 'utf8', (err, data) => {
+  if (!err) {
+      const initialData = JSON.parse(data);
+      configJSON = initialData;
+      umbralMin = initialData.umbral.min;
+      umbralMax = initialData.umbral.max;
+      console.log('Initial umbrals loaded:', umbralMin, umbralMax);
+  }
+});
+
+console.log(`Min: ${umbralMin}°C\t|Max: ${umbralMax}°C`);
 
 console.log("inicializando...\n");
 //Funcion de conexion al servidor MQTT
@@ -159,10 +178,28 @@ app.post('/enviar-sensores', (req, res) =>{
 
 app.post('/actualizar-umbral',(req, res) =>{
   const {nuevoMinimo,nuevoMaximo} = req.body;
+  
+  editarConfigJSON(configPath, "umbral", "min",nuevoMinimo);
+  editarConfigJSON(configPath, "umbral", "max",nuevoMaximo);
+  
   umbralMin = nuevoMinimo;
   umbralMax = nuevoMaximo;
-
+  
   console.log ('Nuevos umbrales: ', umbralMin, '°C |',umbralMax,'°C');
   res.sendStatus(200);
 });
 
+function editarConfigJSON(path,keyPrimaria,keySecundaria,valor) {
+  nuevaConfig = configJSON;
+  if (keyPrimaria in nuevaConfig){
+    if (keySecundaria in nuevaConfig[keyPrimaria]){
+      nuevaConfig[keyPrimaria][keySecundaria]= valor
+      fs.writeFile(path, JSON.stringify(nuevaConfig, null,2), (err) => {
+        if (!err) {
+            console.log("archivo escrito exitosamente");
+            console.log(nuevaConfig);
+        }
+      })
+    }
+  }
+}

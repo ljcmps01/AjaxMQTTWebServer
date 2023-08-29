@@ -1,18 +1,9 @@
 umbralMin = null
 umbralMax = null
 
+setTimeout(recibirUmbrales, 1000);
 $(document).ready(() => 
 {
-  // Obtengo los vales iniciales de los umbrales
-  $.get("/recibir-umbrales",function(data){
-    const {min, max} = data;
-    umbralMin = min;
-    umbralMax = max;
-    
-    document.getElementById("umbralMin").placeholder = `min (${umbralMin}°C)`;
-    document.getElementById("umbralMax").placeholder = `max (${umbralMax}°C)`;
-    
-  })
 
   function leerSensores() 
   {
@@ -69,6 +60,7 @@ $(document).ready(() =>
     }
    setInterval(leerSensores,1000);
    
+   
    const botonUpdateUmbral = $("#umbral-update");
    botonUpdateUmbral.click(()=> actualizarUmbral("umbralMin","umbralMax"));
    
@@ -117,6 +109,19 @@ function cargarDatos(sala)
     datosSala=datosSala.concat(`</li>`);
   }
   return datosSala;
+}
+
+// Obtengo los vales iniciales de los umbrales
+function recibirUmbrales() {
+  $.get("/recibir-umbrales",function(data){
+    const {min, max} = data;
+    umbralMin = min;
+    umbralMax = max;
+    
+    document.getElementById("umbralMin").placeholder = `min (${umbralMin}°C)`;
+    document.getElementById("umbralMax").placeholder = `max (${umbralMax}°C)`;
+    
+  })
 }
 
 function actualizarUmbral(minID,maxID) {
