@@ -1,10 +1,10 @@
 umbralMin = null
 umbralMax = null
 
-setTimeout(recibirUmbrales, 1000);
+
 $(document).ready(() => 
 {
-
+  recibirUmbrales();
   function leerSensores() 
   {
       // console.log('Runing ajax...');

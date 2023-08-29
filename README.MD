@@ -22,12 +22,7 @@ El codigo principal es el encontrado en Arduino>DHTwJSON, el cual toma la config
 * Python (loggeo, analisis de datos)
 
 ### TO-DO
-#### 1. Configuracion de umbral persistente
-    Actualmente la configuracion se mantendra mientras no se interrumpa la instancia del servidor, si el servidor llega a detenerse o reiniciarse, al volver a conectarse los valores del umbral se reiniciaran. Ademas los umbrales estan integrados unicamente en el servidor.
-
-    La idea es que el servidor lea un JSON de configuracion dentro del propio directorio dentro del cual estara la informacion del umbral con su minimo y maximo, entonces al iniciar el servidor este leerá dicho archivo y posteriormente lo mandará a la pagina web una vez se hayá cargador la pagina.
-
-    Luego, dentro de la pagina web el usuario podrá modificar los valores de la misma forma que se hace actualmente, con la diferencia de que una vez que son modificados, dichos valores serán enviados al servidor para que este modifique el JSON de configuración (lo cual permitiria a otros servicios externos al servidor web acceder a estos valores)
+(28/08) ~~#### 1. Configuracion de umbral persistente~~
 
 #### 2. Notificación via mail
     (Depende de #1)

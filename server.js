@@ -31,15 +31,17 @@ let umbralMax = 30;
 
 // Lectura de json inicial
 
-fs.readFile(configPath, 'utf8', (err, data) => {
-  if (!err) {
-      const initialData = JSON.parse(data);
-      configJSON = initialData;
-      umbralMin = initialData.umbral.min;
-      umbralMax = initialData.umbral.max;
-      console.log('Initial umbrals loaded:', umbralMin, umbralMax);
-  }
-});
+configJSON = leerConfigJSON(configPath);
+
+if (configJSON != null){
+  umbralMin = configJSON.umbral.min;
+  umbralMax = configJSON.umbral.max;
+  console.log('Lectura de configuracion exitosa!');
+}
+
+else{
+  console.log('Falló la lectura del archivo, utilizando valores predeterminados...');
+}
 
 console.log(`Min: ${umbralMin}°C\t|Max: ${umbralMax}°C`);
 
@@ -202,4 +204,10 @@ function editarConfigJSON(path,keyPrimaria,keySecundaria,valor) {
       })
     }
   }
+}
+
+function leerConfigJSON(path) {
+  rawData = fs.readFileSync(configPath);
+  JSONdata = JSON.parse(rawData);
+  return JSONdata;
 }
