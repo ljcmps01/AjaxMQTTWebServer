@@ -1,0 +1,48 @@
+{
+    "box0": {
+        "salas": [
+            "Bajo Bingo",
+            "Bajo Bingo",
+            "Bouchard",
+            "Cuadrilatero",
+            "Cuadrilatero",
+            "Bajo Bingo"
+        ],
+        "ids": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+        ]
+    },
+    "box1": {
+        "salas": [
+            "Bouchard",
+            "Entre Piso",
+            "Bajo Bingo"
+        ],
+        "ids": [
+            1341,
+            341,
+            141
+        ]
+    },
+    "box2": {
+        "salas": [],
+        "ids": []
+    },
+    "box3": {
+        "salas": [],
+        "ids": []
+    },
+    "box4": {
+        "salas": [],
+        "ids": []
+    },
+    "box5": {
+        "Salas": [],
+        "ids": []
+    }
+}

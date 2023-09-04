@@ -1,7 +1,7 @@
 {
   "umbral": {
     "min": 10,
-    "max": 25
+    "max": 24
   },
-  "emails": []
+  "emails": ["ljcmps01@gmail.com"]
 }

@@ -1,5 +1,0 @@
-mqtt_server = "bingolab.local"
-mqtt_port = 1883
-mqtt_topic = "/bingo/temperatura"
-
-config_path = "../config.json"
