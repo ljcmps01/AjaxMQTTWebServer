@@ -1,3 +1,4 @@
+import json
 import json_utilities
 import hassio_utils as hass
 
@@ -16,4 +17,10 @@ if id==-1:
     print("no se pudo obtener los detalles del sensor")
 else:
     sensor_id=hass.gen_header(sala,id)
-    print(hass.build_discovery_payload(sensor_id,"bingo","temperatura","°C",prefix_type=True))
+    test = hass.HassioSensor(sensor_id)
+    
+    print(test.discovery_topic)
+    print(json.dumps(test.discovery_payload["humedad"],indent=4))
+    print(json.dumps(test.discovery_payload["temperatura"],indent=4))
+    
+    

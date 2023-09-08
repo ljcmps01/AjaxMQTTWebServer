@@ -1,6 +1,56 @@
 import json
 
 base_discovery_topic = "homeassistant/sensor/placeholder/config"
+topic_root = "bingo"
+
+class HassioSensor:
+    #Generar unico por entidad (temperatura y humedad independientes)
+    #Testear las propiedad enabled_by_default  y expire_after 
+    #Probar si con el atributo device_class se eligen automaticamente las unidades de medida
+    def __init__(self, sensor_id:str, sensor_types={"temperatura":"°C","humedad":"%"}):
+        self.id = sensor_id
+        
+        self.sensor_units = sensor_types
+        
+        self.discovery_topic = f'homeassistant/sensor/{sensor_id}/config'
+        self.stat_topic = f'{topic_root}/{sensor_id}'
+        self.availability_topic = f'{topic_root}/{sensor_id}/available'
+        
+        self.discovery_payload = self.build_all_discovery_payloads(self.sensor_units)
+        
+        
+    
+    def build_discovery_payload(self,sensor_type:str,unit_of_meas:str):
+        sensor_name=f'{sensor_type} {self.id.replace("_"," ")}'
+            
+        sensor_name=sensor_name.title()
+        
+        
+        discovery_payload = {
+            "name":f"{sensor_name}",
+            "uniq_id":self.id,
+            "stat_t":f"{self.stat_topic}/{sensor_type}",
+            "availability_topic":self.availability_topic,
+            "optimistic":False,
+            "qos":0,
+            "retain":True,
+            "unit_of_meas":unit_of_meas
+        }
+        
+        return discovery_payload
+    
+    def build_all_discovery_payloads(self,sensor_types:dict):
+        payload_dict=dict()
+        
+        for sensor_type,sensor_unit in sensor_types.items():
+            payload_dict.update({sensor_type:self.build_discovery_payload(sensor_type,sensor_unit)})
+            
+        return payload_dict
+    
+    
+    
+
+    
 
 def gen_header(sala:str,sensor_id:int,beautify=False):
     """genera el nombre del sensor
@@ -77,25 +127,3 @@ def build_discovery_topic(sensor_id:str,base_topic=base_discovery_topic,topic_pl
         
     return discovery_topic
 
-def build_discovery_payload(sensor_id:str,topic_root:str,sensor_type:str,unit_of_meas:str,sensor_name="",prefix_type=True):
-    if not sensor_name:
-        sensor_name=sensor_id.replace("_"," ")
-        sensor_name=sensor_name.capitalize()
-    
-    if prefix_type:
-        sensor_name=f'{sensor_type} {sensor_name}'
-    
-    base_discovery_payload = {
-        "name":f"{sensor_name}",
-        "uniq_id":f"{sensor_id}",
-        "stat_t":f"{topic_root}/{sensor_id}/{sensor_type}",
-        "availability_topic":f"{topic_root}/{sensor_id}/available",
-        "optimistic":False,
-        "qos":0,
-        "retain":True,
-        "unit_of_meas":f"{unit_of_meas}"
-    }
-    
-    return base_discovery_payload
-    
-    
