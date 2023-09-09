@@ -1,22 +1,43 @@
 import json
+import paho.mqtt.client as mqtt
 
 base_discovery_topic = "homeassistant/sensor/placeholder/config"
 topic_root = "bingo"
+
+class MQTTPublisher:
+    def __init__(self, mqtt_server, mqtt_port):
+        self.server = mqtt_server
+        self.port = mqtt_port
+        self.client = mqtt.Client()
+        
+        self.client.connect(self.server,self.port,60)
+        
+        
+    def send_message(self, topic:str, payload:str):
+        error = False
+        if self.client.is_connected():
+            self.client.publish(topic,payload)
+        else:
+            error = True
+        return error
+
 
 class HassioSensor:
     #Generar unico por entidad (temperatura y humedad independientes)
     #Testear las propiedad enabled_by_default  y expire_after 
     #Probar si con el atributo device_class se eligen automaticamente las unidades de medida
-    def __init__(self, sensor_id:str, sensor_types={"temperatura":"°C","humedad":"%"}):
-        self.id = sensor_id
+    def __init__(self, sensor_id:str, sensor_type:str,sensor_unit:str):
         
-        self.sensor_units = sensor_types
+        self.id = f"{sensor_type}_{sensor_id}"
         
-        self.discovery_topic = f'homeassistant/sensor/{sensor_id}/config'
-        self.stat_topic = f'{topic_root}/{sensor_id}'
+        self.unit = sensor_unit
+        self.type = sensor_type
+        
+        self.discovery_topic = f'homeassistant/sensor/{self.id}/config'
+        self.stat_topic = f'{topic_root}/{sensor_id}/{sensor_type}'
         self.availability_topic = f'{topic_root}/{sensor_id}/available'
         
-        self.discovery_payload = self.build_all_discovery_payloads(self.sensor_units)
+        self.discovery_payload = self.build_discovery_payload(self.type,self.unit)
         
         
     
@@ -29,23 +50,17 @@ class HassioSensor:
         discovery_payload = {
             "name":f"{sensor_name}",
             "uniq_id":self.id,
-            "stat_t":f"{self.stat_topic}/{sensor_type}",
+            "stat_t":{self.stat_topic},
             "availability_topic":self.availability_topic,
             "optimistic":False,
             "qos":0,
             "retain":True,
-            "unit_of_meas":unit_of_meas
+            "unit_of_meas":unit_of_meas,
+            "device_class":sensor_type
         }
         
         return discovery_payload
     
-    def build_all_discovery_payloads(self,sensor_types:dict):
-        payload_dict=dict()
-        
-        for sensor_type,sensor_unit in sensor_types.items():
-            payload_dict.update({sensor_type:self.build_discovery_payload(sensor_type,sensor_unit)})
-            
-        return payload_dict
     
     
     
@@ -105,25 +120,3 @@ def get_sensor_info(config_JSON:dict,box_id:int,sensor_index:int, verbose=False)
         print(error_msg)
     
     return sala,id
-
-def build_discovery_topic(sensor_id:str,base_topic=base_discovery_topic,topic_placeholder="placeholder"):
-    """Crea el topic de discovery del sensor segun su id reemplazando el placeholder 
-    por el sensor_id en la base del topic cargado
-
-    Args:
-        sensor_id (str): nombre id del sensor
-        base_topic (str, optional): Plantilla base del topic a generar. Por defecto se carga la plantilla generica
-        de Homeassistant para MQTT Discovery.
-        topic_placeholder (str, optional): string a buscar dentro de base topic para reemplazar por el 
-        id del sensor. Defaults to "placeholder".
-
-    Returns:
-        str: topic generado, si no se pudo realizar al menos un reemplazo devuelve una string vaia
-    """
-    discovery_topic = ""
-    
-    if topic_placeholder in base_topic:
-        discovery_topic = base_topic.replace(topic_placeholder,sensor_id)
-        
-    return discovery_topic
-
