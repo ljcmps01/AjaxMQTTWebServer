@@ -1,43 +1,38 @@
 import json
 import paho.mqtt.client as mqtt
 
-base_discovery_topic = "homeassistant/sensor/placeholder/config"
-topic_root = "bingo"
+mqtt_server = "bingolab.local"
+mqtt_port = 1883
 
-class MQTTPublisher:
-    def __init__(self, mqtt_server, mqtt_port):
-        self.server = mqtt_server
-        self.port = mqtt_port
-        self.client = mqtt.Client()
-        
-        self.client.connect(self.server,self.port,60)
-        
-        
-    def send_message(self, topic:str, payload:str):
-        error = False
-        if self.client.is_connected():
-            self.client.publish(topic,payload)
-        else:
-            error = True
-        return error
+#dev
+topic_root = "testtopic/test"
+discovery_root = "testtopic/test"
+
+#prod
+# topic_root = "bingo"
+# discovery_root = "discovert"
 
 
 class HassioSensor:
     #Generar unico por entidad (temperatura y humedad independientes)
     #Testear las propiedad enabled_by_default  y expire_after 
     #Probar si con el atributo device_class se eligen automaticamente las unidades de medida
-    def __init__(self, sensor_id:str, sensor_type:str,sensor_unit:str):
+    def __init__(self, sensor_id:str, sensor_type:str,sensor_unit:str, arduino_topic:str):
         
         self.id = f"{sensor_type}_{sensor_id}"
         
         self.unit = sensor_unit
         self.type = sensor_type
         
-        self.discovery_topic = f'homeassistant/sensor/{self.id}/config'
+        self.discovery_topic = f'{discovery_root}/sensor/{self.id}/config'
         self.stat_topic = f'{topic_root}/{sensor_id}/{sensor_type}'
         self.availability_topic = f'{topic_root}/{sensor_id}/available'
         
         self.discovery_payload = self.build_discovery_payload(self.type,self.unit)
+        
+        self.client = mqtt.Client()
+        
+        self.client.connect(mqtt_server,mqtt_port)
         
         
     
