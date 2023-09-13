@@ -33,6 +33,12 @@ class HassioSensor:
         self.client = mqtt.Client()
         
         self.client.connect(mqtt_server,mqtt_port)
+        self.client.on_connect = self.connect_callback
+        
+    def connect_callback(self,client ,userdata, mid, granted_qos):
+        print("conectado exitosamente")
+        self.client.publish(self.discovery_topic,self.discovery_payload)
+        self.client.publish(self.availability_topic,"online")
         
         
     
@@ -45,7 +51,7 @@ class HassioSensor:
         discovery_payload = {
             "name":f"{sensor_name}",
             "uniq_id":self.id,
-            "stat_t":{self.stat_topic},
+            "stat_t":self.stat_topic,
             "availability_topic":self.availability_topic,
             "optimistic":False,
             "qos":0,
@@ -53,8 +59,8 @@ class HassioSensor:
             "unit_of_meas":unit_of_meas,
             "device_class":sensor_type
         }
-        
-        return discovery_payload
+        parsed_discovery_payload = json.dumps(discovery_payload)
+        return parsed_discovery_payload
     
     
     

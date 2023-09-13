@@ -32,12 +32,12 @@ else:
     
     print(test.discovery_topic)
     
-    test.client.on_subscribe = connect_callback
-    test.client.subscribe(box_topic)
+    # test.client.on_subscribe = connect_callback
+    # test.client.subscribe(box_topic)
+    # test.client.on_message=callback
     
     while True:
-        test.client.on_message=callback
-    
+        test.client.loop()
     
     
     
