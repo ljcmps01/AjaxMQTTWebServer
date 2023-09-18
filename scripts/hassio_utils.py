@@ -12,7 +12,6 @@ discovery_root = "testtopic/test"
 # topic_root = "bingo"
 # discovery_root = "discovert"
 
-
 class HassioSensor:
     #Generar unico por entidad (temperatura y humedad independientes)
     #Testear las propiedad enabled_by_default  y expire_after 
@@ -62,7 +61,53 @@ class HassioSensor:
         parsed_discovery_payload = json.dumps(discovery_payload)
         return parsed_discovery_payload
     
+    def send_status(self,value):
+        error = False
+        
+        if self.client.is_connected():
+            self.client.publish(self.stat_topic,value)
+        else:
+            error = True
+        
+        return error
     
+class BoxListener:
+    def __init__(self,box_topic):
+        self.client = mqtt.Client()
+        self.in_topic = box_topic
+        self.sensor_dict = dict()
+        self.boxes_config = dict()
+        
+        self.client.connect(mqtt_server,mqtt_port)
+        self.client.subscribe(self.in_topic)
+        
+        self.client.on_message = self.message_arrive
+        
+    def message_arrive(self, client, userdata, message:mqtt.MQTTMessage):
+        payload = json.loads(message.payload)
+        
+        print(f'se recibio:\n{payload}')
+        
+        sala,id = get_sensor_info(self.boxes_config,payload["box_id"],payload["sensor_id"])
+        
+        if id != -1:
+            sensor_id = gen_header(sala,id)
+            
+            if not(sensor_id in self.sensor_dict):
+                new_temp_sensor = HassioSensor(sensor_id,"temperature","°C",self.in_topic)
+                new_hum_sensor = HassioSensor(sensor_id,"humidity","%",self.in_topic)
+                
+                self.sensor_dict.update({
+                    sensor_id : {"temperature":new_temp_sensor,
+                                "humidity":new_hum_sensor}
+                })
+                
+            self.sensor_dict[sensor_id]["temperature"].send_status(payload["temp"])
+            self.sensor_dict[sensor_id]["humidity"].send_status(payload["hum"])
+        
+        
+        
+        
     
     
 
