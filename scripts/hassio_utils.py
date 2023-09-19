@@ -5,12 +5,12 @@ mqtt_server = "bingolab.local"
 mqtt_port = 1883
 
 #dev
-topic_root = "testtopic/test"
-discovery_root = "testtopic/test"
+# topic_root = "testtopic/test"
+# discovery_root = "testtopic/test"
 
 #prod
-# topic_root = "bingo"
-# discovery_root = "discovert"
+topic_root = "bingo"
+discovery_root = "homeassistant"
 
 class HassioSensor:
     #Generar unico por entidad (temperatura y humedad independientes)
@@ -35,7 +35,7 @@ class HassioSensor:
         self.client.on_connect = self.connect_callback
         
     def connect_callback(self,client ,userdata, mid, granted_qos):
-        print("conectado exitosamente")
+        print(f"sensor {self.id} conectado exitosamente")
         self.client.publish(self.discovery_topic,self.discovery_payload)
         self.client.publish(self.availability_topic,"online")
         
@@ -61,22 +61,29 @@ class HassioSensor:
         parsed_discovery_payload = json.dumps(discovery_payload)
         return parsed_discovery_payload
     
-    def send_status(self,value):
+    def send_status(self,value, tries = 3):
         error = False
+        err_count=0
         
-        if self.client.is_connected():
-            self.client.publish(self.stat_topic,value)
-        else:
-            error = True
+        while err_count < tries:
+            if self.client.is_connected():
+                self.client.publish(self.stat_topic,value)
+                error = False
+                break
+            else:
+                print(f"sensor {self.id} no conectado")
+                self.client.connect(mqtt_server,mqtt_port)
+                error = True
+                err_count+=1            
         
         return error
     
 class BoxListener:
-    def __init__(self,box_topic):
+    def __init__(self,box_topic:str, config_dict:dict):
         self.client = mqtt.Client()
         self.in_topic = box_topic
         self.sensor_dict = dict()
-        self.boxes_config = dict()
+        self.boxes_config = config_dict
         
         self.client.connect(mqtt_server,mqtt_port)
         self.client.subscribe(self.in_topic)
@@ -84,6 +91,7 @@ class BoxListener:
         self.client.on_message = self.message_arrive
         
     def message_arrive(self, client, userdata, message:mqtt.MQTTMessage):
+        error = False
         payload = json.loads(message.payload)
         
         print(f'se recibio:\n{payload}')
@@ -104,7 +112,16 @@ class BoxListener:
                 
             self.sensor_dict[sensor_id]["temperature"].send_status(payload["temp"])
             self.sensor_dict[sensor_id]["humidity"].send_status(payload["hum"])
-        
+            
+        else:
+            error = True
+        return error
+    
+    def sensor_loop(self):
+        for sensor in self.sensor_dict:
+            for sensor_type in self.sensor_dict[sensor]:
+                self.sensor_dict[sensor][sensor_type].client.loop()
+            
         
         
         
@@ -131,6 +148,8 @@ def gen_header(sala:str,sensor_id:int,beautify=False):
     if beautify:
         sala = sala.capitalize()
         separador = " "
+    else:
+        sala = sala.replace(" ","_")
     name = separador.join([sala,str(sensor_id)])
     return name
 
