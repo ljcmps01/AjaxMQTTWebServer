@@ -1,0 +1,8 @@
+[Unit]
+Description=Servicio encargado de la recepcion del trafico de mensajes mqtt de los arduino y los codifica para visualizar los datos recibidos en HomeAssistant
+
+[Service]
+ExecStart=/usr/bin/python3 /home/laboratorio_sv/scripts/hassio-listener/mqtt_delivery.py
+
+[Install]
+WantedBy=multi-user.target

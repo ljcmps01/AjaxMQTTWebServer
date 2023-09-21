@@ -1,8 +1,16 @@
 import json
 import paho.mqtt.client as mqtt
+import logging
+from systemd import journal
 
 mqtt_server = "bingolab.local"
 mqtt_port = 1883
+
+# log = logging.getLogger("hassio_utils")
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("hassio_utils")
+logger.addHandler(journal.JournalHandler())
+
 
 #dev
 # topic_root = "testtopic/test"
@@ -35,7 +43,8 @@ class HassioSensor:
         self.client.on_connect = self.connect_callback
         
     def connect_callback(self,client ,userdata, mid, granted_qos):
-        print(f"sensor {self.id} conectado exitosamente")
+        logger.info(f"sensor {self.id} conectado exitosamente")
+        # print(f"sensor {self.id} conectado exitosamente")
         self.client.publish(self.discovery_topic,self.discovery_payload)
         self.client.publish(self.availability_topic,"online")
         
@@ -71,7 +80,7 @@ class HassioSensor:
                 error = False
                 break
             else:
-                print(f"sensor {self.id} no conectado")
+                logger.warning(f"sensor {self.id} no conectado")
                 self.client.connect(mqtt_server,mqtt_port)
                 error = True
                 err_count+=1            
@@ -94,7 +103,7 @@ class BoxListener:
         error = False
         payload = json.loads(message.payload)
         
-        print(f'se recibio:\n{payload}')
+        logger.info(f'se recibio:\n{payload}')
         
         sala,id = get_sensor_info(self.boxes_config,payload["box_id"],payload["sensor_id"])
         
